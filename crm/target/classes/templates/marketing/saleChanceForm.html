@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="renderer" content="webkit">
+    <title>营销机会</title>
+    <link rel="stylesheet" type="text/css" href="/layui/css/layui.css"/>
+    <style>
+        .layui-form{width: 80%;margin: 0 auto;}
+        .layui-input-block{width: 60%;}
+    </style>
+</head>
+<body>
+<form class="layui-form" action="" lay-filter="example" id="editForm">
+    <div class="layui-row" style="margin-top: 20px;">
+        <div class="layui-col-md6" >
+            <div class="layui-form-item">
+                <label class="layui-form-label">机会来源</label>
+                <div class="layui-input-block">
+                    <input type="text" id="chanceSource" name="chanceSource" lay-verify="title" autocomplete="off" placeholder="请输入机会来源" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">客户名称</label>
+                <div class="layui-input-block">
+                <select id="customerId" name="customerId" lay-verify="required" placeholder="请输入客户名称" autocomplete="off" class="layui-input">
+<!--                    <option>张三</option>-->
+<!--                    <option>张三1</option>-->
+<!--                    <option>张三2</option>-->
+                </select>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">成功几率</label>
+                <div class="layui-input-block">
+                    <input type="text" id="successProbability" name="successProbability" placeholder="请输入成功几率" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">概要</label>
+                <div class="layui-input-block">
+                    <input type="text" id="outline" name="outline" lay-verify="title" autocomplete="off" placeholder="请输入概要" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">联系人</label>
+                <div class="layui-input-block">
+                    <input type="text" id="linkMan" name="linkMan" lay-verify="required" placeholder="请输入联系人" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">手机号</label>
+                <div class="layui-input-block">
+                    <input type="text" id="linkTel" name="linkTel" placeholder="请输入手机号" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-col-md6">
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">详情</label>
+                <div class="layui-input-block">
+                    <input type="text" id="details" name="details" placeholder="请输入详情" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">创建人</label>
+                <div class="layui-input-block">
+                    <input type="text" id="createMan" name="createMan" placeholder="请输入创建人" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">分配人</label>
+                <div class="layui-input-block">
+<!--                   <input type="text" id="assignMan" name="assignMan" placeholder="请输入分配人" autocomplete="off" class="layui-input">-->
+                    <select id="assignMan" name="assignMan" lay-verify="required" placeholder="请输入客户名称" autocomplete="off" class="layui-input">
+                        <!--                    <option>张三</option>-->
+                        <!--                    <option>张三1</option>-->
+                        <!--                    <option>张三2</option>-->
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">分配时间</label>
+                <div class="layui-input-block">
+                    <input type="text" id="assignTime" name="assignTime" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">分配状态</label>
+                <div class="layui-input-block" style="width: 30%;">
+                    <input type="radio" name="state" value="1" title="是"  th:checked="${state==1}"/>
+                    <input type="radio" name="state" value="0" title="否"  th:checked="${state==0}"/>
+                </div>
+                <!--<div class="layui-input-block">
+                    <input type="text" id="state" name="state" placeholder="请输入分配状态" autocomplete="off" class="layui-input">
+                </div>-->
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">开发状态</label>
+                <div class="layui-input-block">
+<!--                    <input type="text" id="devResult" name="devResult" placeholder="请输入开发状态" autocomplete="off" class="layui-input">-->
+                    <select id="devResult" name="devResult" lay-verify="required" placeholder="请输入客户名称" autocomplete="off" class="layui-input">
+                        <option value="未开发">未开发</option>
+                        <option value="已开发">已开发</option>
+                        <option value="开发中">开发中</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item" style="width: 100%;margin-top: 30px;">
+        <div class="layui-input-block" style="width: 80%;margin: 0 auto;text-align: center;">
+            <button type="submit" class="layui-btn" lay-submit="" lay-filter="putIn">提交</button>
+            <!--<button type="submit" class="layui-btn" lay-submit="" lay-filter="update">保存修改</button>-->
+        </div>
+        <!--        把id输入框设为隐藏-->
+        <div class="layui-form-item" hidden>
+            <label class="layui-form-label"></label>
+            <div class="layui-input-block">
+                <input type="hidden" id="id" name="id" lay-verify="title" autocomplete="off" placeholder="请输入id" class="layui-input">
+            </div>
+        </div>
+    </div>
+</form>
+
+<script src="/layui/layui.js" charset="utf-8"></script>
+<script src="/js/jquery3.js" type="text/javascript" charset="utf-8"></script>
+<script src="/js/area.js" type="text/javascript"></script>
+<script src="/js/select.js" type="text/javascript"></script>
+<script >
+    layui.use(['form','laydate'], function(){
+        var form = layui.form;
+        var laydate = layui.laydate;
+
+        //判断是增加还是修改
+        var myUrl = "";
+        if('update' !='[[${type}]]'){
+            myUrl = "/sale-chance/save";
+        }else {
+            myUrl = "/sale-chance/update";
+        }
+
+        //监听添加
+        form.on('submit(putIn)', function(data){
+            // layer.alert("恭喜你，操作成功！",{
+            //     title: 'crm提示'
+            // })
+            //向后台发送ajax请求
+            $.ajax({
+                //编写json格式，设置属性和值
+                url: myUrl,
+                contentType:"application/json;charset=utf-8",
+                data:JSON.stringify(data.field),
+                dataType:"json",
+                type:"post",
+                success:function (data){
+                    //服务器端成功响应的json数据，进行解析
+                    if(data.code==200){
+                        layer.msg("恭喜你，操作成功！",{icon: 1},function () {
+                            parent.location.reload();
+                        });
+                    }else{
+                        layer.msg("Sorry，操作失败！",{icon: 2});
+                    }
+                },
+                //刷新页面
+                //end:parent.location.reload()
+            })
+            return false;
+        });
+
+        //监听修改
+        // form.on('submit(update)', function(data){
+        //     layer.alert("恭喜你，修改成功！",{
+        //         title: 'crm提示'
+        //     })
+        //     //向后台发送ajax请求
+        //     $.ajax({
+        //         //编写json格式，设置属性和值
+        //         url:"http://localhost:8080/crm/saleChance/update",
+        //         contentType:"application/json;charset=utf-8",
+        //         data:JSON.stringify(data.field),
+        //         dataType:"json",
+        //         type:"post",
+        //         success:function (data){
+        //             //服务器端成功响应的json数据，进行解析
+        //         },
+        //         //刷新页面
+        //         end:parent.location.reload()
+        //     })
+        //     return false;
+        // });
+        //页面加载的时候，绑定客户下拉框
+
+        $.ajax({
+            url: '/customer/listChancedCustomers',
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            type: "get",
+            success: function (res) {
+                if (res.code == 200) {
+                    var data = res.data;
+                    //alert(JSON.stringify(data));
+                    for (var i = 0; i < data.length; i++) {
+                        $("#customerId").append("<option value='"+data[i].id+"'>"+data[i].name+"["+data[i].id+"]"+"</option>");
+                    }
+                    $("#customerId").val([[${customerId}]]);
+                    //渲染下拉框
+                    form.render("select");
+                }
+            }
+        });
+        //页面加载的时候，绑定客户下拉框
+        $.ajax({
+            url: '/user/getUserList/2',
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            type: "get",
+            success: function (res) {
+                if (res.code == 200) {
+                    var data = res.data;
+                    //alert(JSON.stringify(data));
+                    for (var i = 0; i < data.length; i++) {
+                        $("#assignMan").append("<option value='"+data[i].id+"'>"+data[i].userName+"["+data[i].id+"]"+"</option>");
+                    }
+                    $("#assignMan").val([[${assignMan}]]);
+                    //渲染下拉框
+                    form.render("select");
+                }
+            }
+        });
+        laydate.render({
+            elem : '#assignTime',
+            trigger: 'click',
+            type: 'datetime'
+        });
+    });
+
+</script>
+</body>
+</html>

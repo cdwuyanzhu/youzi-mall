@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>CRM</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="/css/index.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/iconfont.css"/>
+    <style type="text/css">
+        i{margin-right: 15px;}
+        a{cursor:pointer;}
+        .i-big{font-size: 20px;font-weight: 700;}
+        #dateTime{color: white;margin-left:200px;width:85%;height: 60px;line-height: 60px;text-align: center;}
+        #h,#m{font-size: 20px;}
+        .layui-layout-left{color: white;height: 60px;line-height: 60px;margin-left: 10px;font-size: 25px;}
+        .spanx{font-size: 12px; margin-left: 5px;color: #b7b7b7;opacity: 0.5;}
+    </style>
+</head>
+<body class="layui-layout-body">
+
+<div class="layui-layout layui-layout-admin quanping-zhuye">
+    <div class="layui-header">
+        <div class="layui-logo">
+            <!--加载index.html-->
+            <a class="logo" lay-href="index.html">
+                <img src="/img/logo1.png" alt="layui" style="width: 100px;height: 100%;">
+            </a>
+        </div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <ul class="layui-layout-left layui-nav-item " >
+            <li><a lay-href="index.html" style="color: white;"><i class="iconfont icon-zhuye" ></i></a>
+                <a href="jacascript:;" style="color: white;"><i class="iconfont icon-danxingshensuo kit-side-fold"></i></a>
+                <a href="jacascript:;" style="color: white;"><i class="iconfont icon-41" id="test-n1"></i></a>
+                <a href="jacascript:;" style="color: white;"><i class="iconfont icon-quanping btn btn-default visible-lg visible-md" id="fullscreen"></i></a>
+            </li>
+        </ul>
+        <div id="dateTime" class="">
+            <!-- 时间 -->
+            <span id="ymdw"></span>
+            <span id="h"></span>:
+            <span id="m"></span>:
+            <span id="s"></span>
+        </div>
+        <ul class="layui-nav layui-layout-right" >
+            <li class="layui-nav-item ">
+                <a href="#">
+                    <i class="layui-icon layui-icon-username" style="font-size: 20px;"></i>
+                    <span id="username" th:text="${session.user.userName}">xxx</span>
+                    <span th:each="role:${session.roles}" th:text="|【${role.roleName}】|">xxx</span>
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a lay-href="/personalData.html">修改资料</a></dd>
+                    <dd><a href="#" id="quit">退出登录</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item"style="margin-left: 5px;">
+                <div class="site-demo-button" id="layerDemo" style="margin-bottom: 0;">
+                    <!-- <button data-method="notice" class="layui-btn">示范一个公告层</button> -->
+                    <!-- <button data-method="confirmTrans" class="layui-btn">配置一个透明的询问框</button> -->
+                    <i class="layui-icon layui-icon-more-vertical" data-method="notice"></i>
+                </div>
+            </li>
+        </ul>
+
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+                <!-- 菜单模板 -->]
+                <li class="layui-nav-item layui-nav-itemed" th:each="p:${session.permissions}">
+                    <a class="" href="javascript:;" th:if="${p.parentId==0}"><i th:class="${p.icon}"></i><span th:text="${p.permissionName}">客户管理</span></a>
+                    <dl class="layui-nav-child" th:each="p2:${session.permissions}">
+                        <dd><a id="customer" th:if="${p2.parentId==p.id}" th:lay-href="${p2.url}">
+                            <i th:class="${p2.icon}"></i><span th:text="${p2.permissionName}">基本信息</span>
+                            <span class="spanx" th:text="${p2.permissionRemarker}">Customer</span></a>
+                        </dd>
+                    </dl>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <!-- <div style="padding: 15px;">内容主体区域</div> -->
+        <div class="layui-show" style="width: 100%;height: 100%;">
+            <!-- <img src="img/bg.jpg" > -->
+            <iframe src="index.html" frameborder="0"  style="width: 100%;height: 100%;"></iframe>
+        </div>
+    </div>
+
+    <div class="layui-footer" style="width: 100%;left: 200px;text-align: center">
+        <!-- 底部固定区域 -->
+        CRM管理系统
+    </div>
+
+    <div id="group" style="padding:20px 50px 20px 50px; line-height: 22px; background-color: #393D49; color: #fff; font-weight: 300;" hidden>
+        <img src="/img/logo1.png" alt="layui" style="width: 230px;height: 150px;">
+        你好！<br>我们小组成员是：<br>秦益、黄雁、莫锦媛<br>欢迎使用我们的crm!<br>给个五星好评呗
+        <div id="test1"></div>
+    </div>
+</div>
+
+
+
+
+
+<script src="/layui/layui.js"></script>
+<script src="/js/jquery3.js" type="text/javascript" charset="utf-8"></script>
+<script src="/js/frame.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    //JavaScript代码区域
+
+    //渲染页面的权限及用户的个人信息
+    $(function (){
+        //向后台发送ajax请求
+        $.ajax({
+            //编写json格式，设置属性和值
+            url: "http://localhost:8080/crm/user/getUser",
+            contentType: "application/json;charset=utf-8",
+            data:"",
+            dataType: "json",
+            type: "post",
+            //服务器端成功响应的json数据，进行解析
+            success: function (data) {
+                $('#username').html(data.userName);
+                //判断用户是否拥有该模块的权限
+                data.permissions.find(function (val){
+                    switch (val) {
+                        case 1:
+                            //权限管理
+                            getPermission();
+                            break;
+                        case 2:
+                            //营销管理
+                            getSale();
+                            break;
+                        case 3:
+                            //客户管理
+                            getCustomer();
+                            break;
+                        case 4:
+                            //服务管理
+                            getService();
+                            break;
+                        default:
+                            break;
+                    }
+                })
+            }
+        })
+    });
+
+    //客户管理模块
+    function getCustomer(){
+        $('#customer').attr('lay-href','customer.html');
+        $('#order').attr('lay-href','customerOrder.html');
+        $('#loss').attr('lay-href','customerLoss.html');
+    }
+
+    //权限管理
+    function getPermission(){
+        $('#user-manager').attr('lay-href','user.html');
+        $('#role-manager').attr('lay-href','role.html');
+        $('#permission-manager').attr('lay-href','permission.html');
+    }
+
+    //营销管理
+    function getSale(){
+        $('#sale-chance').attr('lay-href','saleChance.html');
+        $('#dev-plan').attr('lay-href','developmentPlan.html');
+    }
+
+    //服务管理
+    function getService(){
+        $('#service').attr('lay-href','establish.html');
+    }
+
+    $('#quit').click(function () {
+        layer.confirm('确认退出吗？',function (index) {
+            location.href="/logout";
+        });
+        //向后台发送ajax请求
+        // $.ajax({
+        //     //编写json格式，设置属性和值
+        //     url: "/crm/user/quit",
+        //     contentType: "application/json;charset=utf-8",
+        //     data: "",
+        //     dataType: "json",
+        //     type: "post",
+        //     //服务器端成功响应的json数据，进行解析
+        //     success: function (data) {
+        //     }
+        // })
+    })
+
+
+    layui.use('element', function(){
+        var element = layui.element;
+
+        $(".layui-side a").each(function(index,el){
+            $(el).click(function(){
+                var href=$(this).attr("lay-href");
+                console.log(href);
+                $(".layui-body iframe").attr("src",href);
+            })
+        })
+
+        $(".quanping-zhuye a").each(function(index,el){
+            $(el).click(function(){
+                var href=$(this).attr("lay-href");
+                $(".layui-body iframe").attr("src",href);
+            })
+        })
+
+    });
+
+    //评分星星
+    layui.use(['rate','layer'], function() {
+        var rate = layui.rate;
+        //基础效果
+        rate.render({
+            elem: '#test1'
+            ,choose: function(value){
+                if(value <5){
+                    layer.msg( '居然不给我们五星吗？？' );
+                } else{
+                    layer.msg("谢谢给我们五星好评！");
+                }
+            }
+        })
+    })
+
+    layui.use('layer', function(){ //独立版的layer无需执行这一句
+        var $ = layui.jquery, layer = layui.layer; //独立版的layer无需执行这一句
+
+        //触发事件
+        var active = {
+
+            notice: function(){
+                //示范一个公告层
+                layer.open({
+                    type: 1
+                    ,title: false //不显示标题栏
+                    ,closeBtn: false
+                    ,area: '300px;'
+                    ,shade: 0.8
+                    ,id: 'LAY_layuipro' //设定一个id，防止重复弹出
+                    ,btn: ['好的', 'yes']
+                    ,btnAlign: 'c'
+                    ,moveType: 1 //拖拽模式，0或者1
+                    // ,content: '<div style="padding: 50px; line-height: 22px; background-color: #393D49; color: #fff; font-weight: 300;">你好！<br>我们小组成员是：<br>秦益、黄雁、莫锦媛<br>欢迎使用我们的crm!<br>给个五星好评呗？</div>'
+                    ,content:$("#group")
+                });
+            }
+        }
+        $('#layerDemo .layui-icon').on('click', function(){
+            var othis = $(this), method = othis.data('method');
+            active[method] ? active[method].call(this, othis) : '';
+        });
+
+    });
+
+</script>
+
+</body>
+</html>

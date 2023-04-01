@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>首页</title>
+	<link rel="stylesheet" href="/layui/css/layui.css">
+	<link rel="stylesheet" type="text/css" href="/css/iconfont.css"/>
+	<script src="/js/echarts.min.js" type="text/javascript" charset="utf-8"></script>
+	<style>
+		body{margin: 5px 15px;}
+		.layui-col-space5{margin-top: 5px;height: 140px;}
+		.layui-col-space5 h3{font-weight: 900;}
+		.layui-col-space5 i{font-size: 30px;margin-right: 10px;font-weight: normal;color: #009688;}
+		.layui-card{height: 100px;background-color: white;margin-top: 0px;border-radius: 3%;}
+		.icon{color: white;height: 50px;width: 50px;font-size: 30px;border-radius: 50%;}
+		.jianbao{height: 100px; text-align: center;line-height: 100px;}
+		.jianbao i{margin-right: 10px;font-size: 30px;}
+	/*	阴影*/
+		.layui-col-md3{box-shadow:0px 0px 2px 2px #efefef;cursor: pointer;}
+		.layui-card:hover{background-color: #ececec;}
+		.sec-right{box-shadow:0px 0px 5px 5px #efefef;}
+		.layui-col-md12{box-shadow:0px 0px 5px 5px #efefef;}
+		.beiwanglv{height: 120px;margin:20px 10px 0 ;}
+		.bwl,.bwls{text-align: center;font-size: 15px;height: 120px;line-height: 120px;font-weight: 700;}
+		.bwl:hover{background-color: darkseagreen;}
+	</style>
+</head>
+<body class="">
+<div class="layui-row layui-col-space5">
+	<h3><i class="layui-icon layui-icon-chart-screen"></i>销售简报</h3>
+	<div class="layui-col-md3">
+		<div class="layui-card">
+			<div class="layui-col-md6 jianbao" style="color: #01AAED;"><i class="iconfont icon-kehu" style="color: #01AAED;"></i>新增客户</div>
+			<div class="layui-col-md6 jianbao">
+				<h1 id="customerTotal">0</h1>
+			</div>
+		</div>
+	</div>
+	<div class="layui-col-md3">
+		<div class="layui-card">
+			<div class="layui-col-md6 jianbao" style="color: #009F95;"><i class="iconfont icon-kehu1" style="color: #009F95;"></i>新增联系人</div>
+			<div class="layui-col-md6 jianbao">
+				<h1 id="linkManTotal">0</h1>
+			</div>
+		</div>
+	</div>
+	<div class="layui-col-md3">
+		<div class="layui-card">
+			<div class="layui-col-md6 jianbao" style="color: orange;"><i class="iconfont icon-dingdan" style="color: orange;"></i>新增订单</div>
+			<div class="layui-col-md6 jianbao">
+				<h1 id="orderTotal">0</h1>
+			</div>
+		</div>
+	</div>
+	<div class="layui-col-md3">
+		<div class="layui-card">
+			<div class="layui-col-md6 jianbao" style="color: red;"><i class="iconfont icon-liushihuiyuan" style="color: red;"></i>流失客户</div>
+			<div class="layui-col-md6 jianbao">
+				<h1 id="customerLossTotal">0</h1>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="layui-row layui-col-space10" style="width: 100%;margin-top: 20px;">
+	<!--树状图-->
+	<div class="layui-col-md6 sec-right" style="height:400px;">
+		<div id="Customer" class="" style="height: 300px;width: 100%;margin:75px 30px 0 30px;"></div>
+	</div>
+
+
+	<div class="layui-col-md6 sec-right" style="height:400px;background-color: white">
+		<div class="layui-row" style="width: 100%;margin: 0 auto;">
+			<div class="layui-col-md12" style="height: 200px;margin: 5px;">
+				<h2 style="color:green;font-weight: 700;margin: 5px">
+					<i class="layui-icon layui-icon-release" style="font-size: 30px;margin-right: 10px;"></i>备忘录
+				</h2>
+				<div class="layui-row" style="width:90%;margin: 0 auto;">
+					<div class="site-demo-button" id="layerDemo" style="margin-bottom: 0;width: 100%;">
+						<div class="layui-col-md3 layui-bg-red beiwanglv" data-method="offset" data-type="auto">
+							<p class="bwl">明天要做的事</p>
+							<p class="bwls">给黄小姐回信</p>
+						</div>
+						<div class="layui-col-md3 layui-bg-orange beiwanglv" data-method="offset" data-type="auto" >
+							<p class="bwl">后天要做的事</p>
+							<p class="bwls">回访秦先生</p>
+						</div>
+						<div class="layui-col-md3 layui-bg-blue beiwanglv" data-method="offset" data-type="auto" >
+							<p class="bwl">31号要做的事</p>
+							<p class="bwls">联系莫小姐</p>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="layui-col-md12" style="margin-top: 30px;height: 170px;margin: 5px;">
+				<h2 style="color:coral;font-weight: 700;margin: 5px">
+					<i class="layui-icon layui-icon-chart" style="font-size: 30px;margin-right: 10px;"></i>进度
+				</h2>
+				<p style="font-size: 15px;font-weight: 500;margin-left: 50px;">订单1：</p>
+				<div class="layui-progress layui-progress-big" lay-showpercent="true" style="width: 80%;margin: 0 auto;">
+					<div class="layui-progress-bar" lay-percent="80%" style="background-color: red;"></div>
+				</div>
+				<p style="font-size: 15px;font-weight: 500;margin-left: 50px;">订单2：</p>
+				<div class="layui-progress layui-progress-big" lay-showpercent="true" style="width: 80%;margin: 0 auto;">
+					<div class="layui-progress-bar" lay-percent="90%" style="background-color: orange;"></div>
+				</div>
+				<p style="font-size: 15px;font-weight: 500;margin-left: 50px;">订单3：</p>
+				<div class="layui-progress layui-progress-big" lay-showpercent="true" style="width: 80%;margin: 0 auto;">
+					<div class="layui-progress-bar" lay-percent="100%"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	</div>
+</div>
+
+<div class="layui-row sec-right" style="background-color: white;margin-top: 20px;">
+	<div class="layui-col-md12">
+		<h3 style="text-align: center;font-size: 20px;">圈内存在这么一句话：“世上本来没有CRM，大家的生意越来越难做了，才有了CRM。”</h3>
+	</div>
+</div>
+
+<script src="/layui/layui.js" charset="utf-8"></script>
+<script src="/js/jquery3.js"></script>
+<script type="text/javascript">
+
+	$(function (){
+		//向后台发送ajax请求
+		//渲染客户数
+		$.ajax({
+			//编写json格式，设置属性和值
+			url: "/customer/findTotal",
+			contentType: "application/json;charset=utf-8",
+			data:"",
+			dataType: "json",
+			type: "post",
+			success: function (data) {
+				//服务器端成功响应的json数据，进行解析
+				//渲染前端数据
+				$('#customerTotal').html(data.customerTotal);
+				$('#linkManTotal').html(data.linkManTotal);
+				$('#orderTotal').html(data.orderTotal);
+				$('#customerLossTotal').html(data.customerLossTotal);
+				//初始化报表
+				init(data);
+			}
+		})
+
+
+	})
+
+	function init(data){
+		// 基于准备好的dom，初始化echarts实例
+		var myChart = echarts.init(document.getElementById('Customer'));
+
+		// 指定图表的配置项和数据
+		var option = {
+			title: {text: '客户表' },
+			tooltip: {},
+			legend: { data:['人数']},
+			xAxis: {data: ["五个月前","四个月前","三个月前","两个月前","一个月前","一个月内"]},
+			yAxis: {},
+			series: [{name: '人数',type: 'bar',data: [data.six, data.five, data.four, data.three, data.two, data.one]}],
+			itemStyle: {color:'#01AAED'}
+		};
+		// 使用刚指定的配置项和数据显示图表。
+		myChart.setOption(option);
+	}
+
+
+
+	//进度条
+	layui.use('element', function(){
+		var $ = layui.jquery
+				,element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
+		//触发事件
+		var active = {
+			setPercent: function(){
+				//设置50%进度
+				element.progress('demo', '50%')
+			}
+			,loading: function(othis){
+				var DISABLED = 'layui-btn-disabled';
+				if(othis.hasClass(DISABLED)) return;
+
+				//模拟loading
+				var n = 0, timer = setInterval(function(){
+					n = n + Math.random()*10|0;
+					if(n>100){
+						n = 100;
+						clearInterval(timer);
+						othis.removeClass(DISABLED);
+					}
+					element.progress('demo', n+'%');
+				}, 300+Math.random()*1000);
+				othis.addClass(DISABLED);
+			}
+		};
+	});
+	//备忘录点击事件
+	layui.use('layer', function(){ //独立版的layer无需执行这一句
+		var $ = layui.jquery, layer = layui.layer; //独立版的layer无需执行这一句
+
+		//触发事件
+		var active = {
+			offset: function(othis,bwl,bwls){
+				var type = othis.data('type');
+				layer.open({
+					type: 1
+					,offset: type
+					// ,id: 'layerDemo'+type //防止重复弹出
+					,content: '<div style="padding: 20px 100px;">'+bwl+'<br><h2>'+bwls+'</h2></div>'
+					,btn: '关闭全部'
+					,btnAlign: 'c' //按钮居中
+					,shade: 0 //不显示遮罩
+					,yes: function(){
+						layer.closeAll();
+					}
+				});
+			}
+		};
+
+		$('#layerDemo .beiwanglv').on('click', function(){
+			var othis = $(this), method = othis.data('method');
+			var bwl=$(this).find(".bwl").text();
+			var bwls=$(this).find(".bwls").text();
+			console.log("bwl:"+bwl+",bwls:"+bwls);
+			active[method] ? active[method].call(this, othis,bwl,bwls) : '';
+		});
+
+	});
+</script>
+</body>
+</html>

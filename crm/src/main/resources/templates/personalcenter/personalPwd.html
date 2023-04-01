@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>个人信息show</title>
+    <link rel="stylesheet" href="/css/style1.css">
+    <script src="/js/jquery3.js"></script>
+    <script src="/js/script.js"></script>
+    <link rel="stylesheet" type="text/css" href="/layui/css/layui.css"/>
+    <style type="text/css">
+        .layui-tab {
+            width: 60%;
+            margin: 0 auto;
+            margin-top: 10px;
+        }
+
+        .layui-tab-content {
+        }
+
+        .layui-this {
+            background-color: #40AFFE;
+        }
+
+        .layui-this span {
+            color: white;
+        }
+
+        li {
+            width: 46.5%;
+        }
+
+        li span {
+            font-size: 25px;
+        }
+
+        .layui-input {
+            width: 350px;
+            margin-bottom: 20px;
+        }
+
+        .layui-form {
+            width: 80%;
+            margin: 0 auto;
+        }
+
+        .layui-form-item {
+            width: 82%;
+            margin: 0 auto;
+        }
+
+        .layui-form-label {
+            width: 90px;
+        }
+
+    </style>
+</head>
+<body>
+<div class="layui-tab">
+    <h1 style="width: 80%;margin: 0 auto;text-align: center;">修改密码</h1>
+    <br/>
+    <br/>
+    <br/>
+    <form class="layui-form" action="" lay-filter="example">
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">原密码</label>
+            <div class="layui-input-block">
+                <input type="password" name="userPwd" lay-verify="pass" autocomplete="off" placeholder="请输入原密码"
+                       class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">新密码</label>
+            <div class="layui-input-block">
+                <input type="password" name="userPwd1" lay-verify="pass" autocomplete="off" placeholder="请输入新密码"
+                       class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">确认密码</label>
+            <div class="layui-input-block">
+                <input type="password" name="userPwd2" lay-verify="pass" autocomplete="off" placeholder="确认密码"
+                       class="layui-input">
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <div class="layui-input-block" style="margin-left: 225px;margin-top: 20px">
+<!--                <button type="submit" class="layui-btn" lay-submit="" lay-filter="demo1">修改密码</button>-->
+                <button type="button" onclick="updatePwd();" class="layui-btn" lay-submit="">修改密码</button>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <input type="hidden" name="id" lay-verify="title" autocomplete="off" placeholder="请输入id"
+                       class="layui-input">
+            </div>
+
+            <div class="layui-input-block">
+                <input type="hidden" name="isValid" lay-verify="title" autocomplete="off" placeholder="请输入是否可用"
+                       class="layui-input">
+            </div>
+        </div>
+
+    </form>
+</div>
+
+<!-- 底部动画 -->
+<div style="margin-top: 40px;width: 100%;">
+</div>
+<div class="wave-box">
+    <div class="marquee-box marquee-up" id="marquee-box">
+        <div class="marquee">
+            <div class="wave-list-box" id="wave-list-box1">
+                <ul>
+                    <li>
+                        <img height="60" alt="波浪" src="/img/wave_02.png">
+                    </li>
+                </ul>
+            </div>
+            <div class="wave-list-box" id="wave-list-box2">
+                <ul>
+                    <li>
+                        <img height="60" alt="波浪" src="/img/wave_02.png">
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="marquee-box" id="marquee-box3">
+        <div class="marquee">
+            <div class="wave-list-box" id="wave-list-box4">
+                <ul>
+                    <li>
+                        <img height="60" alt="波浪" src="/img/wave_01.png">
+                    </li>
+                </ul>
+            </div>
+            <div class="wave-list-box" id="wave-list-box5">
+                <ul>
+                    <li>
+                        <img height="60" alt="波浪" src="/img/wave_01.png">
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/js/jquery3.js" type="text/javascript" charset="utf-8"></script>
+<script src="/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    layui.use('element', function () {
+        var $ = layui.jquery,
+            element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
+    });
+
+    layui.use(['form', 'layedit', 'laydate'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            layedit = layui.layedit,
+            laydate = layui.laydate;
+
+        //日期
+        laydate.render({
+            elem: '#date'
+        });
+        laydate.render({
+            elem: '#date1'
+        });
+
+        //创建一个编辑器
+        var editIndex = layedit.build('LAY_demo_editor');
+
+        //自定义验证规则
+        form.verify({
+            content: function (value) {
+                layedit.sync(editIndex);
+            }
+        });
+
+        //监听指定开关
+        form.on('switch(switchTest)', function (data) {
+            layer.msg('开关checked：' + (this.checked ? 'true' : 'false'), {
+                offset: '6px'
+            });
+            layer.tips('温馨提示：请注意开关状态的文字可以随意定义，而不仅仅是ON|OFF', data.othis)
+        });
+
+        //监听提交
+        form.on('submit(demo1)', function (data) {
+
+        });
+    });
+
+
+    function updatePwd() {
+        var userPwd = $("[name=userPwd]").val();
+        var userPwd1 = $("[name=userPwd1]").val();
+        var userPwd2 = $("[name=userPwd2]").val();
+        //alert(userPwd);
+        //向后台发送ajax请求
+        $.ajax({
+            //编写json格式，设置属性和值
+            url: "/user/checkPwd",
+            data: {"userPwd": userPwd},
+            dataType: "json",
+            type: "post",
+            async: true,
+            success: function (d) {
+                //alert(JSON.stringify(d));
+                if (d.code == 200) {
+                    if (userPwd != userPwd1) {
+                        if (userPwd1 == "") {
+                            layer.msg("密码不可以为空！");
+                            return;
+                        }
+                        if (userPwd1 == userPwd2) {
+                            //向后台发送ajax请求
+                            $.ajax({
+                                //编写json格式，设置属性和值
+                                url: "/user/updatePwd",
+                                data: {"userPwd1": userPwd1, "userPwd2": userPwd2},
+                                dataType: "json",
+                                type: "post",
+                                async: true,
+                                success: function (res) {
+                                    if (res.code == 200) {
+                                        layer.msg("修改成功！请重新登录，正在退出系统...", function () {
+                                            parent.location.href = "/login.html";
+                                        });
+                                    } else if (res.code == 9004) {
+                                        layer.msg("两次新密码输入不一致！");
+                                    } else {
+                                        layer.msg("系统异常！");
+                                    }
+                                },
+                            });
+                        } else {
+                            layer.msg("两次新密码输入不一致！");
+                        }
+                    } else {
+                        layer.msg("原密码不能和新密码相同！");
+                    }
+                } else if (d.code == 9008) {
+                    //校验新密码
+                    layer.msg("原密码输入错误！");
+                }
+            },
+        });
+    }
+</script>
+
+</body>
+
+</html>

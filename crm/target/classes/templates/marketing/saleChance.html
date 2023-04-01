@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="utf-8">
+	<title>营销机会</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<link rel="stylesheet" type="text/css" href="/css/iconfont.css"/>
+	<link rel="stylesheet" type="text/css" href="/layui/css/layui.css"/>
+	<style type="text/css">
+		body {
+			overflow-y: scroll;
+		}
+
+		.demoTable {
+			width: 80%;
+			height: 50px;
+			margin: 0 auto;
+			text-align: center
+		}
+	</style>
+</head>
+<body style="margin: 20px;">
+
+<div class="demoTable">
+	搜索客户名称：
+	<div class="layui-inline">
+		<input class="layui-input" name="id" id="demoReload" autocomplete="off">
+	</div>
+	<button class="layui-btn layui-btn-sm layui-bg-blue" data-type="reload">搜索</button>
+</div>
+
+
+<table class="layui-hide" id="saleChance" lay-filter="saleChance"></table>
+
+<script type="text/html" id="toolbarDemo">
+	<div class="layui-btn-container">
+		<button class="layui-btn layui-btn-sm layui-bg-danger" lay-event="getCheckData">删除选中</button>
+		<button class="layui-btn layui-btn-sm layui-bg-blue btn" lay-event="add">添加</button>
+<!--		<button class="layui-btn layui-btn-sm layui-bg-blue btn" lay-event="findAll" onclick="history.go(0)">查看全部信息</button>-->
+		<button class="layui-inline layui-btn layui-btn-primary layui-btn-sm btn" lay-event="refresh"
+				onclick="history.go(0)" style="width: 30px;height: 30px">
+			<i class="layui-icon layui-icon-refresh-3" style="color: #0000FF;padding: 3px 0 0 1px"></i></button>
+
+	</div>
+</script>
+
+<script type="text/html" id="barDemo">
+	<!--	<a class="layui-btn layui-btn-xs layui-bg-blue" lay-event="show">查看</a>-->
+	<a class="layui-btn layui-btn-xs layui-bg-orange" lay-event="edit">编辑</a>
+	<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+
+<script src="/layui/layui.js" charset="utf-8"></script>
+<script src="/js/jquery3.js" type="text/javascript" charset="utf-8"></script>
+
+<script type="text/javascript" th:inline="javascript">
+	layui.use('table', function () {
+		var table = layui.table;
+		table.render({
+			elem: '#saleChance'
+			, url: '/sale-chance/page'
+			, toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+			, height: 450
+			, defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+				title: '提示'
+				, layEvent: 'LAYTABLE_TIPS'
+				, icon: 'layui-icon-tips'
+			}]
+			, cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+			, cols: [[
+				{type: 'checkbox', fixed: 'left'}
+				, {field: 'id', title: '编号', fixed: true, width: 70}
+				, {field: 'chanceSource', title: '机会来源', fixed: true, width: 100}
+				, {field: 'customerName', title: '客户名称', width: 100}
+				, {field: 'successProbability', title: '成功几率',width: 80}
+				, {field: 'outline', title: '概要', width: 150}
+				// , {field: 'linkMan', title: '联系人', sort: true, width: 90}
+				, {field: 'linkTel', title: '手机号', sort: true, width: 100}
+				, {field: 'details', title: '详情', width: 150}
+				, {field: 'createMan', title: '创建人', sort: true, width: 120}
+				// , {field: 'assignMan', title: '分配人', sort: true, width: 150}
+				// , {field: 'assignTime', title: '分配时间', sort: true, width: 150}
+				, {field: 'state', title: '分配状态', sort: true, width: 105,templet:function (data) {
+						return data.state==1 ? "已分配":"未分配";
+
+					}},
+				 , {field: 'devResult', title: '开发状态', sort: true, width: 150}
+				, {title: '操作', toolbar: '#barDemo', width: 150, fixed: 'right'}
+			]]
+			, id: 'testReload'
+			, page: true
+			, done: function (res, curr, count, status) {
+				layer.msg("操作成功，共查询到 " + count + " 个营销机会信息");
+			}
+		});
+
+
+		//查找id
+		var active = {
+			reload: function () {
+				var demoReload = $('#demoReload');
+
+				//执行重载
+				table.reload('testReload', {
+					page: {
+						curr: 1 //重新从第 1 页开始
+					}
+					, where: {
+						key: demoReload.val()
+					}
+				}, 'data');
+			}
+		};
+
+		$('.demoTable .layui-btn').on('click', function () {
+			var type = $(this).data('type');
+			active[type] ? active[type].call(this) : '';
+		})
+
+		//回车键搜索
+		$('#demoReload').on('keypress',function () {
+			var type = $('.demoTable .layui-btn').data('type');
+			active[type] ? active[type].call(this) : '';
+		})
+
+		// 头工具栏事件
+		table.on('toolbar(saleChance)', function (obj) {
+			var checkStatus = table.checkStatus(obj.config.id);
+			switch (obj.event) {
+					//删除选中的数据
+				case 'getCheckData':
+					var data = checkStatus.data;
+					console.log(data)
+					// layer.alert(JSON.stringify(data));
+					layer.confirm('确认删除该行吗？', function (index) {
+						// obj.del();
+						layer.close(index);
+						//向后台发送ajax请求
+						$.ajax({
+							//编写json格式，设置属性和值
+							url: "/sale-chance/deleteMany",
+							contentType: "application/json;charset=utf-8",
+							data:JSON.stringify(data),
+							dataType: "json",
+							type: "delete",
+							success: function (data) {
+								//服务器端成功响应的json数据，进行解析
+								if (data.code==200){
+									layer.msg("恭喜你，操作成功！",{icon :1},function () {
+										parent.location.reload();
+									});
+
+								}else {
+									layer.msg("sorry，操作失败！",{icon :2});
+								}
+							}
+						})
+						//返回首页
+						//history.go(0)
+					});
+					break;
+				case 'getCheckLength':
+					var data = checkStatus.data;
+					layer.msg('选中了：' + data.length + ' 个');
+					break;
+				case 'isAll':
+					layer.msg(checkStatus.isAll ? '全选' : '未全选');
+					break;
+				case 'add':
+					layer.open({
+						type: 2,
+						title: '<h1 style="font-size: 25px;text-align: center">添加营销机会</h1>',
+						shadeClose: true,
+						shade: 0.6,
+						area: ['1100px', '75%'],
+						shadowColor: false,
+						content: 'saleChanceForm.html',
+					});
+					break;
+
+					//自定义头工具栏右侧图标 - 提示
+				case 'LAYTABLE_TIPS':
+					layer.alert('这是工具栏右侧自定义的一个图标按钮');
+					break;
+			}
+			;
+		});
+
+		//监听行工具事件
+		table.on('tool(saleChance)', function (obj) {
+			var data = obj.data;
+			if (obj.event === 'del') {
+				console.log("操作：" + obj.event);
+				layer.confirm('真的删除行么', function (index) {
+					obj.del();
+					layer.close(index);
+					//向后台发送ajax请求
+					$.ajax({
+						//编写json格式，设置属性和值
+						url: "/sale-chance/delete?id=" + data.id,
+						contentType: "application/json;charset=utf-8",
+						dataType: "json",
+						type: "delete",
+						success: function (data) {
+							//服务器端成功响应的json数据，进行解析
+							if (data.code==200){
+								layer.msg("恭喜你，操作成功！",{icon :1},function () {
+									parent.location.reload();
+								});
+
+							}else {
+								layer.msg("sorry，操作失败！",{icon :2});
+							}
+						}
+					})
+				});
+			} else if (obj.event === 'edit') {
+				console.log("操作：" + obj.event);
+				// layer.prompt({
+				// 	formType: 2
+				// 	,value: data.email
+				// }, function(value, index){
+				// 	obj.update({
+				// 		email: value
+				// 	});
+				// 	layer.close(index);
+				// });
+				layer.open({
+					type: 2,
+					title: '<h1 style="font-size: 25px;text-align: center">编辑营销机会</h1>',
+					shadeClose: true,
+					shade: 0.6,
+					area: ['1100px', '75%'],
+					shadowColor: false,
+					content: 'saleChanceForm.html?type=update&customerId='+data.customerId+"&assignMan="+data.assignMan+"&state="+data.state,
+					success: function (layero, index) {
+						//方法一：body.html() body里面的内容
+						var body = layer.getChildFrame('body', index);
+						body.find('#chanceSource').val(data.chanceSource);
+						//方法二：获取的子页面的 div
+						//var div = layero.find('iframe').contents();
+						//div.find('#cusManager').val(data.cusManager);
+						body.find('#customerId').val(data.customerId);
+						body.find('#customerName').val(data.customerName);
+						body.find('#successProbability').val(data.successProbability);
+						body.find('#outline').val(data.outline);
+						body.find('#linkMan').val(data.linkMan);
+						body.find('#linkTel').val(data.linkTel);
+						body.find('#details').val(data.details);
+						body.find('#createMan').val(data.createMan);
+						body.find('#assignMan').val(data.assignMan);
+						body.find('#assignTime').val(data.assignTime);
+						body.find('#state').val(data.state);
+						body.find('#devResult').val(data.devResult);
+						//给id赋值
+						body.find('#id').val(data.id);
+					}
+				});
+			} else if (obj.event === 'show') {
+				console.log("操作：" + obj.event);
+			}
+		});
+	});
+</script>
+
+</body>
+</html>

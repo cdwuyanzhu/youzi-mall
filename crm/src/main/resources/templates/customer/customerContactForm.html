@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="renderer" content="webkit">
+    <title>交往记录表单</title>
+    <link rel="stylesheet" type="text/css" href="/layui/css/layui.css"/>
+    <style>
+        .layui-form{width: 80%;margin: 0 auto;}
+        .layui-input-block{width: 70%;margin-top: 10px}
+    </style>
+</head>
+<body>
+
+<form class="layui-form" action="" lay-filter="example" id="editForm">
+    <div class="layui-form-item">
+        <label class="layui-form-label">联系人ID</label>
+        <div class="layui-input-block">
+            <input type="text" name="linkManId" id="linkManId" lay-verify="required" autocomplete="off" class="layui-input"
+                   readonly unselectable="on" style="cursor: not-allowed">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">客户ID</label>
+        <div class="layui-input-block">
+            <input type="text" name="cusId" id="cusId" lay-verify="required" autocomplete="off" class="layui-input"
+                   readonly unselectable="on" style="cursor: not-allowed">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">地址</label>
+        <div class="layui-input-block">
+            <input type="text" name="address" id="address" lay-verify="required" autocomplete="off" placeholder="请输入地址" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">交往时间</label>
+        <div class="layui-input-block">
+            <input type="date" name="contactTime" id="contactTime" lay-verify="required" placeholder="请输入交往时间" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">概要</label>
+        <div class="layui-input-block">
+            <input type="textarea" name="outline" id="outline" lay-verify="required" placeholder="请输入交往地址" autocomplete="off" class="layui-textarea">
+        </div>
+    </div>
+
+    <div class="layui-form-item" style="width: 100%;margin-top: 30px;">
+        <div class="layui-input-block" style="width: 80%;margin: 0 auto;text-align: center;">
+            <button type="submit" class="layui-btn" lay-submit="" lay-filter="putIn">提交</button>
+<!--            <button type="submit" class="layui-btn" lay-submit="" lay-filter="update">保存修改</button>-->
+        </div>
+        <!--        把id输入框设为隐藏-->
+        <div class="layui-form-item" hidden>
+            <label class="layui-form-label"></label>
+            <div class="layui-input-block">
+                <input type="hidden" id="id" name="id" lay-verify="title" autocomplete="off" placeholder="请输入姓名" class="layui-input">
+            </div>
+        </div>
+    </div>
+</form>
+
+<script src="/layui/layui.js" charset="utf-8"></script>
+<script src="/js/jquery3.js" type="text/javascript" charset="utf-8"></script>
+<script src="/js/area.js" type="text/javascript"></script>
+<script src="/js/select.js" type="text/javascript"></script>
+<script>
+    layui.use(['form'], function(){
+        var form = layui.form;
+        //判断是新增还是修改
+        var myUrl="";
+        if ($('#id').val() == ""){
+            myUrl="/customer-contact/save";
+        }else{
+            myUrl="/customer-contact/update";
+        }
+        //监听添加
+        form.on('submit(putIn)', function(data){
+            // layer.alert("恭喜你，添加成功！",{
+            //     title: 'crm提示'
+            // })
+            //向后台发送ajax请求
+            $.ajax({
+                //编写json格式，设置属性和值
+                url:myUrl,
+                contentType:"application/json;charset=utf-8",
+                data:JSON.stringify(data.field),
+                dataType:"json",
+                type:"post",
+                async:false,
+                success:function (data){
+                    if (data.code==200){
+                        layer.msg("恭喜你，添加成功！",{icon :1},function () {
+                            parent.location.reload()
+                        });
+
+                    }else {
+                        layer.msg("sorry，操作失败！",{icon :2});
+                    }
+                },
+                // end:parent.location.reload()
+            })
+            return false;
+        });
+
+        $("#cusId,#linkManId").click(function () {
+            layer.msg("不可修改");
+        })
+    });
+    //地址
+    function jg(){
+        alert($("#province").val()+$("#city").val()+$("#district").val());
+    }
+
+</script>
+</body>
+</html>

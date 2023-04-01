@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <title>客户</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" href="/css/iconfont.css"/>
+    <link rel="stylesheet" type="text/css" href="/layui/css/layui.css"/>
+    <style type="text/css">
+        body {
+            overflow-y: scroll;
+        }
+        .demoTable {
+            width: 80%;
+            height: 50px;
+            margin: 0 auto;
+            text-align: center
+        }
+    </style>
+</head>
+<body style="margin: 20px;">
+
+<div class="demoTable">
+    搜索客户：
+    <div class="layui-inline">
+        <input class="layui-input" name="id" id="demoReload" autocomplete="off">
+    </div>
+    <button class="layui-btn layui-btn-sm layui-bg-blue" data-type="reload">搜索</button>
+</div>
+
+
+<table class="layui-hide" id="customer" lay-filter="customer"></table>
+
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="getCheckData">删除选中</button>
+        <!--		<button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="getCheckLength"></button>-->
+        <!--		<button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="isAll">验证是否全选</button>-->
+        <!--		<button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="loss">流失选中</button>-->
+        <!--		<button class="layui-btn layui-btn-sm layui-bg-blue btn" lay-event="findAll" onclick="history.go(0)">查看全部客户信息</button>-->
+        <button class="layui-btn layui-btn-sm layui-bg-blue btn" lay-event="add">添加</button>
+        <button class="layui-inline layui-btn layui-btn-primary layui-btn-sm btn" lay-event="refresh"
+                onclick="history.go(0)" style="width: 30px;height: 30px">
+            <i class="layui-icon layui-icon-refresh-3" style="color: #0000FF;padding: 3px 0 0 1px"></i></button>
+    </div>
+</script>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs layui-bg-blue" lay-event="show">查看联系人</a>
+    <a class="layui-btn layui-btn-xs layui-bg-orange" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="loss">流失</a>
+</script>
+
+
+<script src="/layui/layui.js" charset="utf-8"></script>
+<script src="/js/jquery3.js" type="text/javascript" charset="utf-8"></script>
+
+<script type="text/javascript"  th:inline="javascript">
+    layui.use('table', function () {
+        var table = layui.table;
+        table.render({
+            elem: '#customer'
+            , url: '/customer/page'  //分页地址
+            , toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+            , height: 550
+            , defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+                title: '提示'
+                , layEvent: 'LAYTABLE_TIPS'
+                , icon: 'layui-icon-tips'
+            }]
+            , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+            , cols: [[
+                {type: 'checkbox', fixed: 'left',width: 80}
+                , {field: 'id', title: '编号', fixed: true, width: 70}
+                , {field: 'name', title: '姓名', fixed: true, width: 80}
+                , {field: 'area', title: '地区', width: 150}
+                , {field: 'cusManager', title: '经理',width: 80}
+                , {field: 'level', title: '级别', width: 70}
+                , {field: 'satisfaction', title: '满意度', sort: true, width: 90}
+                , {field: 'creditLine', title: '信用度', sort: true, width: 90}
+                , {field: 'address', title: '地址', width: 180}
+                , {field: 'tel', title: '手机号', sort: true, width: 120}
+                // , {field: 'webSite', title: '网址', sort: true, width: 130}
+                // , {field: 'state', title: '流失状态', sort: true, width: 100},
+                , {title: '操作', toolbar: '#barDemo', width: 250,fixed: 'right'}
+            ]]
+            , id: 'testReload'
+            , page: true
+            , done: function (res, curr, count, status) {
+                layer.msg("操作成功，共查询到 " + count + " 个客户信息");
+            }
+        });
+
+
+        //查找姓名
+        var active = {
+            reload: function () {
+                var demoReload = $('#demoReload');
+                //执行重载
+                table.reload('testReload', {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                    , where: {
+                        key: demoReload.val()
+                    }
+                }, 'data');
+            }
+        };
+
+        $('.demoTable .layui-btn').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        })
+        //回车键搜索
+        $('#demoReload').on('keypress',function () {
+            var type = $('.demoTable .layui-btn').data('type');
+            active[type] ? active[type].call(this) : '';
+        })
+
+        // 头工具栏事件
+        table.on('toolbar(customer)', function (obj) {
+            var checkStatus = table.checkStatus(obj.config.id);
+            switch (obj.event) {
+                case 'getCheckData':
+                    var data = checkStatus.data;
+                    layer.confirm('确定删除选中行吗', function (index) {
+                        // obj.del();
+                        layer.close(index);
+                        //向后台发送ajax请求
+                        $.ajax({
+                            //编写json格式，设置属性和值
+                            url: "/customer/deleteMany",
+                            contentType: "application/json;charset=utf-8",
+                            data:JSON.stringify(data),
+                            dataType: "json",
+                            type: "delete",
+                            success: function (data) {
+                                //服务器端成功响应的json数据，进行解析
+                                if (data.code==200){
+                                    layer.msg("恭喜你，操作成功！",{icon :1},function () {
+                                        parent.location.reload()
+                                    });
+
+                                }else {
+                                    layer.msg("sorry，操作失败！",{icon :2});
+                                }
+                            }
+                        })
+                        //返回首页
+                        // history.go(0)
+                       // location.reload();
+                    });
+                    break;
+                case 'getCheckLength':
+                    var data = checkStatus.data;
+                    layer.msg('选中了：' + data.length + ' 个');
+                    break;
+                case 'isAll':
+                    layer.msg(checkStatus.isAll ? '全选' : '未全选');
+                    break;
+                case 'add':
+                    layer.open({
+                        type: 2,
+                        title: '<h1 style="font-size: 25px;text-align: center">添加客户</h1>',
+                        shadeClose: true,
+                        shade: 0.6,
+                        area: ['1100px', '75%'],
+                        shadowColor: false,
+                        content: 'customerForm.html',
+                    });
+                    break;
+
+                //自定义头工具栏右侧图标 - 提示
+                case 'LAYTABLE_TIPS':
+                    layer.alert('这是工具栏右侧自定义的一个图标按钮');
+                    break;
+            }
+            ;
+        });
+
+        //监听行工具事件
+        table.on('tool(customer)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'del') {
+                layer.confirm('确定删除该行吗', function (index) {
+                    obj.del();
+                    layer.close(index);
+                    console.log("删除的id是："+data.id);
+                    //向后台发送ajax请求
+                    $.ajax({
+                        //编写json格式，设置属性和值
+                        url: "/customer/delete?id=" + data.id,
+                        contentType: "application/json;charset=utf-8",
+                        dataType: "json",
+                        type: "delete",
+                        success: function (data) {
+                            //服务器端成功响应的json数据，进行解析
+                            if (data.code==200){
+                                layer.msg("恭喜你，添加成功！",{icon :1},function () {
+                                    parent.location.reload()
+                                });
+
+                            }else {
+                                layer.msg("sorry，操作失败！",{icon :2});
+                            }
+                        }
+                    })
+                });
+            } else if (obj.event === 'edit') {
+                console.log("操作：" + obj.event);
+                layer.open({
+                    type: 2,
+                    title: '<h1 style="font-size: 25px;text-align: center">编辑客户</h1>',
+                    shadeClose: true,
+                    shade: 0.6,
+                    area: ['1100px', '75%'],
+                    shadowColor: false,
+                    content: 'customerForm.html',
+                    success: function(layero, index) {
+                        //方法一：body.html() body里面的内容
+                        var body = layer.getChildFrame('body', index);
+                        body.find('#name').val(data.name);
+                        //方法二：获取的子页面的 div
+                        var div = layero.find('iframe').contents();
+
+                        div.find('#cusManager').val(data.cusManager);
+                        //下拉框赋值
+                        body.find('[name="level"]').val(data.level);
+                        body.find('[name="satisfaction"]').val(data.satisfaction);
+                        body.find('[name="creditLine"]').val(data.creditLine);
+
+                        body.find('#address').val(data.address);
+                        body.find('#postCode').val(data.postCode);
+                        body.find('#tel').val(data.tel);
+                        body.find('#webSite').val(data.webSite);
+                        body.find('#regCaptial').val(data.regCaptial);
+                        body.find('#depBank').val(data.depBank);
+                        body.find('#depAccount').val(data.depAccount);
+                        body.find('#yearlyTurnover').val(data.yearlyTurnover);
+                        //给id赋值
+                        body.find('#id').val(data.id);
+                    }
+                });
+            } else if (obj.event === 'show') {
+                console.log("操作："+obj.event);
+                var showId = obj.data.id;
+                layer.open({
+                    type: 2,
+                    // title: '<h1 style="font-size: 25px;text-align: center;">相关联系人</h1>',
+                    title:false,
+                    shadeClose: true,//点击遮罩关闭弹出层
+                    shade: 0.6,
+                    area: ['90%', '90%'],
+                    shadowColor: false,
+                    anim:2,//从底部滑出
+                    content: 'customerLinkMan.html',
+                    success: function(layero, index) {
+                        var body = layer.getChildFrame('body', index);
+                        body.find('#cusId').val(data.id);
+                    }
+                });
+            }else if(obj.event === 'loss'){
+                console.log("操作："+obj.event);
+                layer.open({
+                    type: 2,
+                    title: '<h1 style="font-size: 25px;text-align: center;">流失原因</h1>',
+                    // title:false,
+                    shadeClose: true,//点击遮罩关闭弹出层
+                    shade: 0.6,
+                    area: ['60%', '65%'],
+                    shadowColor: false,
+                    anim:2,//从底部滑出
+                    content: 'customerLossForm.html',
+                    success: function(layero, index) {
+                        var body = layer.getChildFrame('body', index);
+                        body.find('#cusId').val(data.id);
+                        body.find("#cusName").val(data.name);
+                        body.find("#cusManger").val(data.cusManager);
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

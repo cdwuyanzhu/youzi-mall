@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="renderer" content="webkit">
+    <title>服务</title>
+    <link rel="stylesheet" type="text/css" href="/layui/css/layui.css"/>
+    <style>
+        .layui-form{width: 80%;margin: 0 auto;}
+        .layui-input-block{width: 60%;}
+    </style>
+</head>
+<body>
+<form class="layui-form" action="" lay-filter="example" id="editForm">
+    <div class="layui-row" style="margin-top: 20px;">
+        <div class="layui-col-md6" >
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">服务类型</label>
+                <div class="layui-input-block">
+                    <select name="serviceType" lay-filter="serviceType">
+                        <option value="售前服务" selected="">售前服务</option>
+                        <option value="售中服务">售中服务</option>
+                        <option value="售后服务">售后服务</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">概要</label>
+                <div class="layui-input-block">
+                    <input type="text" id="outline" name="outline" lay-verify="required" autocomplete="off" placeholder="请输入概要" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">客户编号</label>
+                <div class="layui-input-block">
+                    <select id="cusId" name="cusId" lay-filter="creditLine" lay-verify="required">
+                        <!--  <option value="1">张三</option>-->
+                    </select>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">服务状态</label>
+                <div class="layui-input-block">
+                    <select name="state" id="state" lay-filter="serviceType">
+                        <option value="未开启服务">未开启服务</option>
+                        <option value="已开启服务">已开启服务</option>
+                        <option value="正在服务中">正在服务中</option>
+                        <option value="服务已结束">服务已结束</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">服务请求</label>
+                <div class="layui-input-block">
+                    <input type="text" id="request" name="request" lay-verify="required" placeholder="请输入服务请求内容" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="layui-form-item" style="width: 100%;margin-top: 30px;">
+        <div class="layui-input-block" style="width: 80%;margin: 0 auto;text-align: center;">
+            <button type="submit" class="layui-btn" lay-submit="" lay-filter="putIn">提交</button>
+            <!--<button type="submit" class="layui-btn" lay-submit="" lay-filter="update">保存修改</button>-->
+        </div>
+        <!--        把id输入框设为隐藏-->
+        <div class="layui-form-item" hidden>
+            <label class="layui-form-label"></label>
+            <div class="layui-input-block">
+                <input type="hidden" id="id" name="id" lay-verify="title" autocomplete="off" placeholder="请输入id" class="layui-input">
+            </div>
+        </div>
+    </div>
+</form>
+
+<script src="/layui/layui.js" charset="utf-8"></script>
+<script src="/js/jquery3.js" type="text/javascript" charset="utf-8"></script>
+<script src="/js/area.js" type="text/javascript"></script>
+<script src="/js/select.js" type="text/javascript"></script>
+
+<script type="text/javascript" th:inline="javascript">
+    layui.use(['form'], function(){
+        var form = layui.form;
+
+        //监听添加
+        form.on('submit(putIn)', function(data){
+            //判断是增加还是修改
+            var text="新增";
+            var myUrl = "";
+            if ($('#id').val() == ""){
+                myUrl = "/cus-service/save";
+            }else {
+                myUrl = "/cus-service/update";
+                text="更新";
+            }
+            //向后台发送ajax请求
+            $.ajax({
+                //编写json格式，设置属性和值
+                url:myUrl,
+                contentType:"application/json;charset=utf-8",
+                data:JSON.stringify(data.field),
+                dataType:"json",
+                type:"post",
+                async:false,
+                success:function (data){
+                    //服务器端成功响应的json数据，进行解析
+                    if(data.code==200){
+                        layer.msg("恭喜你，"+text+"操作成功！",{icon: 1},function () {
+                            parent.location.href="establish.html";
+                        });
+                    }else{
+                        layer.msg("Sorry，操作失败！",{icon: 2});
+                    }
+                },
+                //刷新页面
+                //end:parent.location.reload(),
+            });
+            return false;
+        });
+
+        //页面加载的时候，绑定客户下拉框
+        $.ajax({
+            url: '/customer/listChancedCustomers',
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            type: "get",
+            success: function (res) {
+                if (res.code == 200) {
+                    var data = res.data;
+                    //alert(JSON.stringify(data));
+                    for (var i = 0; i < data.length; i++) {
+                        $("#cusId").append("<option value='"+data[i].id+"'>"+data[i].name+"["+data[i].id+"]"+"</option>");
+                    }
+                    $("#cusId").val([[${cusId}]]);
+                    //渲染下拉框
+                    form.render("select");
+                }
+            }
+        });
+
+    });
+
+</script>
+</body>
+</html>

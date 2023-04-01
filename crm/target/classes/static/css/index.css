@@ -1,0 +1,20 @@
+.layui-nav-item-clicked {
+  color: blue;
+}
+/* 二级目录的底部颜色 */
+.layui-nav-tree .layui-nav-child dd.layui-this, .layui-nav-tree .layui-nav-child dd.layui-this a, .layui-nav-tree .layui-this, .layui-nav-tree .layui-this>a, .layui-nav-tree .layui-this>a:hover {
+    background-color: #55aaff;
+    color: #fff;
+}
+
+/* 用户名底部颜色 */
+.layui-nav .layui-this:after, .layui-nav-bar, .layui-nav-tree .layui-nav-itemed:after {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 5px;
+    background-color: #55aaff;
+    transition: all .2s;
+    -webkit-transition: all .2s;
+}
